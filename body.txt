@@ -1,0 +1,317 @@
+//BODY compo
+
+<aura:component controller="task2getusername">
+    <aura:dependency resource="markup://force:navigateToSObject" type="EVENT"/>
+    <aura:attribute name="switchData" type="String" default="1" />
+    <aura:attribute name="cont" type="Contact" />
+    <aura:attribute name="emergencyCont" type="Contact" />
+    <aura:attribute name="Search_Contact" type="Contact" />
+    <aura:attribute name="certList" type="Cerificate__c[]" />
+
+    <aura:attribute name="data1" type="List" />
+    <aura:attribute name="columns" type="List" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+	<aura:if isTrue="{!v.switchData == '2'}">
+        <center><c:NewCertificate /></center>
+    </aura:if>    
+    
+    <aura:if isTrue="{!v.switchData == '4'}">
+         <lightning:input type="search" aura:id="search" label="Search"
+         name="search" placeholder="Enter Colleague Name" onchange="{!c.searchString}"/>
+    </aura:if>
+    
+   <div style="height: 300px">
+        <lightning:datatable keyField="id" columns="{!v.columns}" data="{!v.data1}"
+            onrowaction="{! c.handleRowAction }" hideCheckboxColumn="true" />
+    </div>
+
+</aura:component>
+
+
+//BODY controller
+
+
+({
+    doInit : function(component, event, helper)
+    {
+        console.log("Executing DoInit in Body");
+        try
+        {
+            switch(component.get("v.switchData"))
+            {
+                case "1": helper.getPersonalDetails(component);
+                console.log("Showing Personal Details");
+                    break;
+                    
+                case "2": helper.getCertifications(component);
+                console.log("Showing Certifications");
+                    break;
+                    
+                case "3": helper.getEmergencyContact(component);
+                console.log("Showing Emergency Contacts");
+                    break;
+                    
+                case "4": helper.getSearchNames(component);
+                console.log("Showing Search");
+                    break;
+            }
+        }
+        catch(ex)
+        {
+            console.log(ex.message);
+        }
+        
+		//component.find("table1").set("v.data", "v.cont");
+    },
+    
+    searchString : function(component, event, helper)
+    {
+        var str = component.find("search").get("v.value");
+        console.log("Executing Search for : " + str);
+        
+        if(str != "" && str != null && str != undefined)
+        {
+            helper.getSearchNames(component, str);
+        }
+        else
+        {
+            component.set("v.data1", null);
+        }
+        
+    },
+    
+    handleRowAction: function (component, event, helper)
+    {
+        console.log("Row clicked!");
+        var row = event.getParam('row');
+        console.log(row.Id);
+
+        console.log("Executing Navigate To Search Object");
+
+        var ev = $A.get("e.force:navigateToSObject");
+        ev.setParams({
+            "recordId": row.Id,
+            "slideDevName" : "Details"
+        });
+        ev.fire();
+        
+        //If Action 'Show Details' clicked on Row
+        //if(event.getParam('action').name === 'show_details')
+    }
+})
+
+
+
+//BODY helper
+
+
+({
+    getContactId : function()
+    {
+        return '0037F00000ftPEtQAM';
+    },
+	
+     getActions : function()
+    {
+        var actions = [{ label: 'Show details', name: 'show_details' }];
+        return actions;
+    },
+    
+    setTableData : function(component, columns, result)
+    {
+        console.log(columns);
+        component.set("v.columns", columns);
+        console.log(result);
+        component.set("v.data1", result);
+    },
+    
+	getPersonalDetails : function(component) {
+        var action = component.get("c.getContactsPersonalDetails");
+        action.setParams({contactId: this.getContactId()});
+        action.setCallback(this, function(response)
+        {
+            var state = response.getState();
+            if(state === 'SUCCESS')
+            {
+                var result = response.getReturnValue();
+
+                console.log(result);
+
+                component.set("v.columns", [
+                    {label: 'First Name', fieldName: 'FirstName', type: 'text'},
+                    {label: 'Last name', fieldName: 'LastName', type: 'text'},
+                    {label: 'Email', fieldName: 'Email', type: 'email'},
+                    {label: 'Designation', fieldName: 'Designation__c', type: 'text'},
+                    {label: 'Relationship Status', fieldName: 'Relationship_Status__c', type: 'text'},
+                    {label: 'Technology', fieldName: 'Technology__c', type: 'text'},
+                    {label: 'Interests', fieldName: 'Interests__c', type: 'text'}
+                ]);
+                
+                component.set("v.data1", result);
+            }
+        });
+        $A.enqueueAction(action);
+    },
+    
+    getCertifications : function(component) {
+        var action = component.get("c.getContactsCertificates");
+        action.setParams({contactId: this.getContactId()});
+        action.setCallback(this, function(response)
+        {
+            var state = response.getState();
+            if(state === 'SUCCESS')
+            {
+                var result = response.getReturnValue();
+
+                console.log(result);
+                
+                component.set("v.columns", [
+                    {label: 'Certificate Name', fieldName: 'Name', type: 'text'},
+                    {label: 'Link', fieldName: 'Link__c', type: 'text'},
+                    {label: 'Valid Till', fieldName: 'Valid_till__c', type: 'date'}
+                ]);
+
+                component.set("v.data1", result);
+            }
+        });
+        $A.enqueueAction(action);
+    },
+    
+    getEmergencyContact : function(component) {
+        var action = component.get("c.getContactsEmergencyContact");
+        action.setParams({contactId: this.getContactId()});
+        action.setCallback(this, function(response)
+        {
+            var state = response.getState();
+            if(state === 'SUCCESS')
+            {
+                var result = response.getReturnValue();
+
+                console.log(result);
+
+                component.set("v.columns", [
+                    {label: 'Name', fieldName: 'Name', type: 'text'},
+                    {label: 'Email', fieldName: 'Email', type: 'email'},
+                    {label: 'Phone', fieldName: 'Phone', type: 'phone'},
+                    {label: 'Relationship', fieldName: 'Relationship__c', type: 'text'}
+                ]);
+
+                component.set("v.data1", result);
+            }
+        });
+        $A.enqueueAction(action);
+    },
+    
+    getSearchNames : function(component, str) {
+        var action = component.get("c.getContactsFromSearch");
+        action.setParams({s: str});
+        action.setCallback(this, function(response)
+        {
+            var state = response.getState();
+            if(state === 'SUCCESS')
+            {
+                var columns = [
+                        {label: 'Id', fieldName: 'Id', type: 'text'},
+                        {label: 'Name', fieldName: 'Name', type: 'text'},
+                        {type: 'action', typeAttributes: { rowActions: this.getActions() }}
+                    ];
+                    this.setTableData(component, columns, response.getReturnValue());
+            }
+        });
+        $A.enqueueAction(action);
+    },
+    
+    insertCerti : function(component) {
+        var action = component.get("c.insertContactsCertification");
+        action.setParams({contactId: this.getContactId()});
+        action.setCallback(this, function(a)
+        {
+            var state = response.getState();
+            if(state === 'SUCCESS')
+            {
+                console.log(response.getReturnValue());
+                component.set("v.username_text", a.getReturnValue());
+            }
+        });
+        $A.enqueueAction(action);
+	},
+    navigateToSearchObject : function(event, contId)
+    {
+        console.log("Executing Navigate To Search Object");
+
+        var navEvt = $A.get("e.force:navigateToSObject");
+        navEvt.setParams({
+            "recordId": contId,
+            "slideDevName": 'related'
+        });
+        navEvt.fire();
+
+        /*var contUrl = "https://" + window.location.hostname + "/one/one.app#/sObject/" + contId + "/view";
+        console.log("URL is : " + contUrl);
+        
+        window.open(contUrl);*/
+    }
+})
+
+
+//APEX controller
+
+
+public class task2getusername {
+    
+    //Get user's Name
+    @AuraEnabled
+  public static String getUserName() {
+    return userinfo.getName();
+  }
+    
+    @AuraEnabled
+    public static Contact getContactsPersonalDetails(string contactId)
+    {
+        return [SELECT FirstName,
+                LastName,
+                Email,
+                Designation__c,
+                Relationship__c,
+                Technology__c,
+                interest__c
+                FROM Contact WHERE Id =: contactId];
+    }
+    
+    @AuraEnabled
+    public static List<Cerificate__c> getContactsCertificates(string contactId)
+    {
+        return [SELECT Name, Link__c, Valid_Till__c FROM Cerificate__c WHERE Contact__c =: contactId];
+    }
+    
+    @AuraEnabled
+    public static boolean getContactsCertificate(Cerificate__c certi)
+    {
+        try
+        {
+            insert certi;
+            return true;
+        }
+        catch(Exception ex)
+        {
+            System.debug(ex.getMessage());
+            return false;
+        }
+    }
+    
+ 
+   @AuraEnabled
+    public static Contact getContactsEmergencyContact(Id contactId)
+    {
+        Id x = [SELECT emergencyContact__c FROM Contact WHERE Id =: contactId].get(0).emergencyContact__c;
+        return [SELECT Name, Email, Phone, Relationship__c FROM Contact WHERE Id =: x];
+    }
+    
+    @AuraEnabled
+    public static List<Contact> getContactsFromSearch(String s)
+    {
+        String matching = s + '%';
+        return [SELECT Name FROM Contact WHERE Name LIKE :matching];
+    }
+}

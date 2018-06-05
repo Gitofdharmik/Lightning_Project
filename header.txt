@@ -1,0 +1,61 @@
+//Header Component
+
+<aura:component controller="task2getusername">
+    <aura:attribute name="greeting_text" type="string" default="Morning" />
+    <aura:attribute name="username_text" type="string" default="User" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <header class="slds-page-header">
+    	<center>
+            <h1 class="slds-page-header__title">Good {!v.greeting_text}, {!v.username_text}!</h1>
+        </center>
+    </header>
+</aura:component>
+
+
+//Header controller
+
+({
+	doInit : function(component, event, helper) {
+        console.log("Executing DoInit");
+		var greet_text = helper.greetings();
+        console.log(greet_text);
+        component.set("v.greeting_text", greet_text);
+        
+        var action = component.get("c.getUserName");
+        action.setCallback(this, function(a)
+        {
+            var state = a.getState();
+            if(state === 'SUCCESS')
+            {
+                console.log(a.getReturnValue());
+                component.set("v.username_text", a.getReturnValue());
+            }
+        });
+        $A.enqueueAction(action);
+        
+	}
+})
+
+//Header helper
+
+({
+	greetings : function() {
+		var thehours = new Date().getHours();
+        var msg;
+        var morning = ('Morning');
+        var afternoon = ('Afternoon');
+        var evening = ('Evening');
+    
+        if (thehours >= 0 && thehours < 12) {
+            msg = morning; 
+    
+        } else if (thehours >= 12 && thehours < 17) {
+            msg = afternoon;
+    
+        } else if (thehours >= 17 && thehours < 24) {
+            msg = evening;
+        }
+        
+        return msg;
+	}
+})

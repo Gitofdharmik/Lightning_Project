@@ -1,0 +1,22 @@
+//Tabset compo
+
+<aura:application extends="force:slds" >
+    <c:Task2 />
+           <lightning:tabset variant="vertical">
+                <lightning:tab label="Personal Details" id="one">
+                    <c:task2body switchData="1" />
+                </lightning:tab>
+                <lightning:tab label="Certifications" id="two">
+                    <c:task2body switchData="2" />
+                </lightning:tab>
+                <lightning:tab label="Emergency Contact" id="three">
+                    <c:task2body switchData="3" />
+                </lightning:tab>
+                <lightning:tab label="Search for Colleagues" id="four">
+                    <c:task2body switchData="4" />
+                </lightning:tab>
+            </lightning:tabset>
+    <c:task2footer />
+</aura:application>
+
+//tabset controller

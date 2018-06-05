@@ -1,0 +1,5 @@
+//Footer component
+
+<aura:component >
+	<div class="slds-docked-form-footer">Copyright 2018, Incapsulate, LLC</div>
+</aura:component>
