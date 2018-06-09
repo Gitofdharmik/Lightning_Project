@@ -1,0 +1,34 @@
+<aura:component controller="task2getusername">
+    <aura:dependency resource="markup://force:navigateToSObject" type="EVENT"/>
+    <aura:attribute name="switchData" type="String" default="1" />
+    <aura:attribute name="cont" type="Contact" />
+    <aura:attribute name="emergencyCont" type="Contact" />
+    <aura:attribute name="Search_Contact" type="Contact" />
+    <aura:attribute name="certList" type="Cerificate__c[]" />
+    <aura:attribute name="idcont" type="id"/>
+    <lightning:overlayLibrary aura:id="overlayLib"/>
+	<aura:attribute name="hidecomp" type="boolean" default="true" />
+    <aura:attribute name="data1" type="List" />
+    <aura:attribute name="columns" type="List" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+	<aura:if isTrue="{!v.switchData == '2'}">
+         <lightning:button name="modal" label="Add Certificate" onclick="{!c.handleShowModal}" />
+    </aura:if>    
+    
+    <aura:if isTrue="{!v.switchData == '4'}">
+        
+         <lightning:input type="search" aura:id="search" label="Search"
+         name="search" placeholder="Enter Colleague Name" onchange="{!c.searchString}"/>
+               <aura:if isTrue="{!v.hidecomp}">
+               		<c:ContactPagination />
+            </aura:if> 
+        
+    </aura:if>
+    
+   <div style="height: 300px">
+        <lightning:datatable keyField="id" columns="{!v.columns}" data="{!v.data1}"
+            onrowaction="{! c.handleRowAction }" hideCheckboxColumn="true" />
+    </div>
+
+</aura:component>

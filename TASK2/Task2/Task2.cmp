@@ -1,0 +1,10 @@
+<aura:component controller="task2getusername">
+    <aura:attribute name="greeting_text" type="string" default="Morning" />
+    <aura:attribute name="username_text" type="string" default="User" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <header class="slds-page-header">
+    	<center>
+            <h1 class="slds-page-header__title">Good {!v.greeting_text}, {!v.username_text}!</h1>
+        </center>
+    </header>
+</aura:component>
