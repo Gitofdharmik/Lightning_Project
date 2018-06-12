@@ -1,0 +1,6 @@
+<aura:component controller="task2getusername" implements="flexipage:availableForAllPageTypes">
+	<ltng:require scripts="{!$Resource.Chart}" afterScriptsLoaded="{!c.generateChart}"/>
+    <div class="slds-box">
+		<canvas aura:id="linechart" height="1" width="5"></canvas>
+    </div>
+</aura:component>

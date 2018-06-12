@@ -1,0 +1,4 @@
+<aura:component >
+    <aura:attribute name="currentYear" type="String" />
+	<div class="slds-docked-form-footer">Copyright {!v.currentYear}, Incapsulate, LLC</div>
+</aura:component>

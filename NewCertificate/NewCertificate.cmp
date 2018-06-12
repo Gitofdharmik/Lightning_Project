@@ -1,0 +1,29 @@
+<aura:component controller="task2getusername" access="global">
+  <lightning:overlayLibrary aura:id="overlayLib"/>
+  <aura:attribute name="certiId" type="String" default="" description="Holds certificate ID"/>
+  <aura:attribute name="certiName" type="String" default="" description="Holds certificate Name"/>
+  <aura:attribute name="certiLink" type="String" default="" description="Holds certificate Link"/> 
+  <aura:attribute name="certiValid" type="Date" default="" description="Holds certificate Valid Date"/>    
+	<form class="slds-form--stacked"> 
+
+    <lightning:input  aura:id="Certificate_Name" label="Name"
+                      Name="Certificate_Name"
+                      required="true"
+                      value="{!v.certiName}"/> 
+
+		<lightning:input  aura:id="Certificate_Link" label="Link"
+                      Name="Certificate_Link"
+                      required="true"
+                      value="{!v.certiLink}"/>
+
+    <lightning:input  aura:id="Certificate_Date" label="Valid Till" type="Date"
+                      name="Certificate_Date"
+                      required="true"
+                      value="{!v.certiValid}"/>
+    <!--Add or Edit Certificate-->
+    <lightning:button label="Save" 
+                      class="slds-m-top--medium"
+                      variant="brand"
+                      onclick="{!c.AddCertificate}"/>
+  </form>  	
+</aura:component>

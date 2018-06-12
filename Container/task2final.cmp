@@ -1,0 +1,6 @@
+<aura:component implements="flexipage:availableForAllPageTypes" access="global">
+    <c:Task2/>
+    <c:task2body/>
+    <c:task2footer/>
+    
+</aura:component>
